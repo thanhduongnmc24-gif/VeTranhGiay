@@ -4,6 +4,7 @@ import PencilKit
 final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerViewControllerDelegate {
     private let khungVeThuong = PKCanvasView()
     private let khungVeTrenCung = PKCanvasView()
+    private let lopTay = UIView()
     private let bangDieuKhien = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterialLight))
     private let cuonCongCu = UIScrollView()
     private let hangCongCu = UIStackView()
@@ -25,6 +26,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
     private var maBanVeHienTai: String?
     private var dangVeTrenCung = false
     private var loaiButNetTrenCung: PKInkingTool.InkType?
+    private var dangDungTay = false
     private var congViecTuĐóngLuu: DispatchWorkItem?
 
     override func viewDidLoad() {
@@ -65,6 +67,13 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
         khungVeThuong.isOpaque = true
         khungVeTrenCung.backgroundColor = .clear
         khungVeTrenCung.isOpaque = false
+
+        lopTay.translatesAutoresizingMaskIntoConstraints = false
+        lopTay.backgroundColor = .clear
+        lopTay.isUserInteractionEnabled = false
+        lopTay.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(xuLyCuChiTay(_:))))
+        lopTay.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(xuLyChamTay(_:))))
+        view.addSubview(lopTay)
 
         bangDieuKhien.translatesAutoresizingMaskIntoConstraints = false
         bangDieuKhien.layer.cornerRadius = 14
@@ -186,7 +195,11 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
             khungVeTrenCung.topAnchor.constraint(equalTo: khungVeThuong.topAnchor),
             khungVeTrenCung.leadingAnchor.constraint(equalTo: khungVeThuong.leadingAnchor),
             khungVeTrenCung.trailingAnchor.constraint(equalTo: khungVeThuong.trailingAnchor),
-            khungVeTrenCung.bottomAnchor.constraint(equalTo: khungVeThuong.bottomAnchor)
+            khungVeTrenCung.bottomAnchor.constraint(equalTo: khungVeThuong.bottomAnchor),
+            lopTay.topAnchor.constraint(equalTo: khungVeThuong.topAnchor),
+            lopTay.leadingAnchor.constraint(equalTo: khungVeThuong.leadingAnchor),
+            lopTay.trailingAnchor.constraint(equalTo: khungVeThuong.trailingAnchor),
+            lopTay.bottomAnchor.constraint(equalTo: khungVeThuong.bottomAnchor)
         ])
     }
 
@@ -283,6 +296,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
     }
 
     private func chonLoaiBut(_ loaiBut: PKInkingTool.InkType, nut: UIButton) {
+        dangDungTay = false
         loaiButDangChon = loaiBut
 
         if loaiButNetTrenCung == loaiBut {
@@ -298,6 +312,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
     }
 
     @objc private func batTatNetTrenCung() {
+        dangDungTay = false
         if dangVeTrenCung {
             dangVeTrenCung = false
             loaiButNetTrenCung = nil
@@ -318,8 +333,68 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
     }
 
     private func capNhatKhungVeDangDung() {
-        khungVeTrenCung.isUserInteractionEnabled = dangVeTrenCung
-        khungVeThuong.isUserInteractionEnabled = !dangVeTrenCung
+        lopTay.isUserInteractionEnabled = dangDungTay
+        khungVeTrenCung.isUserInteractionEnabled = !dangDungTay && dangVeTrenCung
+        khungVeThuong.isUserInteractionEnabled = !dangDungTay && !dangVeTrenCung
+        if dangDungTay { view.bringSubviewToFront(lopTay) }
+        view.bringSubviewToFront(bangDieuKhien)
+    }
+
+    @objc private func xuLyCuChiTay(_ cuChi: UIPanGestureRecognizer) { tayNetTai(cuChi.location(in: lopTay)) }
+    @objc private func xuLyChamTay(_ cuChi: UITapGestureRecognizer) { tayNetTai(cuChi.location(in: lopTay)) }
+
+    private func tayNetTai(_ viTri: CGPoint) {
+        let banKinh = max(CGFloat(12), doDayNet * 0.75)
+        let vungTay = CGRect(
+            x: viTri.x - banKinh,
+            y: viTri.y - banKinh,
+            width: banKinh * 2,
+            height: banKinh * 2
+        )
+
+        let cacNetTrenCung = khungVeTrenCung.drawing.strokes
+        let netTrenCungConLai = cacNetTrenCung.filter { netVe in
+            !netVe.renderBounds
+                .insetBy(dx: -banKinh, dy: -banKinh)
+                .intersects(vungTay)
+        }
+
+        if netTrenCungConLai.count != cacNetTrenCung.count {
+            khungVeTrenCung.drawing = PKDrawing(strokes: netTrenCungConLai)
+            return
+        }
+
+        let cacNetThuong = khungVeThuong.drawing.strokes
+        let netThuongConLai = cacNetThuong.filter { netVe in
+            !netVe.renderBounds
+                .insetBy(dx: -banKinh, dy: -banKinh)
+                .intersects(vungTay)
+        }
+
+        if netThuongConLai.count != cacNetThuong.count {
+            khungVeThuong.drawing = PKDrawing(strokes: netThuongConLai)
+        }
+    }
+
+    private func xacNhanXoaTatCa() {
+        let hopThoai = UIAlertController(title: "Xóa toàn bộ tranh?", message: "Tất cả nét vẽ trên cả hai lớp sẽ bị xóa.", preferredStyle: .alert)
+        hopThoai.addAction(UIAlertAction(title: "Hủy", style: .cancel))
+        hopThoai.addAction(UIAlertAction(title: "Xóa tất cả", style: .destructive) { [weak self] _ in self?.lamMoiBanVe() })
+        present(hopThoai, animated: true)
+    }
+
+    private func lamMoiBanVe() {
+        maBanVeHienTai = nil
+        khungVeThuong.drawing = PKDrawing()
+        khungVeTrenCung.drawing = PKDrawing()
+        dangDungTay = false
+        dangVeTrenCung = false
+        loaiButNetTrenCung = nil
+        title = "Vẽ Tranh Giấy"
+        capNhatKhungVeDangDung()
+        capNhatNutNetTrenCung()
+        capNhatCongCuVe()
+        datNutCongCuDangChon(cacNutCongCu.first)
     }
 
     private func capNhatCongCuVe() {
@@ -356,10 +431,14 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
             return
         }
         dichVuLuuAnh.luu(anh) { [weak self] ketQua in
+            guard let self else { return }
             switch ketQua {
-            case .success: self?.hienThongBao("Đã lưu", "Đã lưu vao Album Anh va Thư viện tranh cua ung dung.")
-            case .failure(let loi): self?.hienThongBao("Đã lưu trong ung dung", "Không thêm được vào Album Ảnh: \(loi.localizedDescription)")
+            case .success:
+                self.hienThongBao("Đã lưu", "Đã lưu vào Album Ảnh và Thư viện tranh của ứng dụng.")
+            case .failure(let loi):
+                self.hienThongBao("Đã lưu trong ứng dụng", "Không thêm được vào Album Ảnh: \(loi.localizedDescription)")
             }
+            self.lamMoiBanVe()
         }
     }
 
@@ -379,10 +458,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
         let hopThoai = UIAlertController(title: "Tạo tranh mới?", message: "Hãy lưu tranh hiện tại nếu cần.", preferredStyle: .alert)
         hopThoai.addAction(UIAlertAction(title: "Hủy", style: .cancel))
         hopThoai.addAction(UIAlertAction(title: "Tạo mới", style: .destructive) { [weak self] _ in
-            self?.maBanVeHienTai = nil
-            self?.khungVeThuong.drawing = PKDrawing()
-            self?.khungVeTrenCung.drawing = PKDrawing()
-            self?.title = "Vẽ Tranh Giấy"
+            self?.lamMoiBanVe()
         })
         present(hopThoai, animated: true)
     }
