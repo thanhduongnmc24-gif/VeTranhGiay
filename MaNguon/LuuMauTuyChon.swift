@@ -64,21 +64,10 @@ extension UIColor {
             return nil
         }
 
-        let thanhPhanDo = CGFloat(
-            (giaTri >> 24) & 255
-        ) / 255.0
-
-        let thanhPhanLuc = CGFloat(
-            (giaTri >> 16) & 255
-        ) / 255.0
-
-        let thanhPhanLam = CGFloat(
-            (giaTri >> 8) & 255
-        ) / 255.0
-
-        let thanhPhanTrongSuot = CGFloat(
-            giaTri & 255
-        ) / 255.0
+        let thanhPhanDo = CGFloat((giaTri >> 24) & 255) / 255.0
+        let thanhPhanLuc = CGFloat((giaTri >> 16) & 255) / 255.0
+        let thanhPhanLam = CGFloat((giaTri >> 8) & 255) / 255.0
+        let thanhPhanTrongSuot = CGFloat(giaTri & 255) / 255.0
 
         self.init(
             red: thanhPhanDo,
@@ -99,13 +88,17 @@ extension UIColor {
             return nil
         }
 
-        let thanhPhanDo = Int(
-            round(thanhPhan[0] * 255)
-        )
+        let thanhPhanDo = Int(round(thanhPhan[0] * 255.0))
+        let thanhPhanLuc = Int(round(thanhPhan[1] * 255.0))
+        let thanhPhanLam = Int(round(thanhPhan[2] * 255.0))
+        let thanhPhanTrongSuot = Int(round(thanhPhan[3] * 255.0))
 
-        let thanhPhanLuc = Int(
-            round(thanhPhan[1] * 255)
+        return String(
+            format: "#%02X%02X%02X%02X",
+            thanhPhanDo,
+            thanhPhanLuc,
+            thanhPhanLam,
+            thanhPhanTrongSuot
         )
-
-        let thanhPhanLam = Int(
-      
+    }
+}

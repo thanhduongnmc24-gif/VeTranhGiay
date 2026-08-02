@@ -25,6 +25,66 @@ jobs:
       - name: Cai XcodeGen
         run: brew install xcodegen
 
+      - name: Tao cac kich thuoc bieu tuong neu co anh goc
+        run: |
+          ANH_GOC="TaiNguyen/BieuTuongGoc.png"
+          THU_MUC_ICON="TaiNguyen/HinhAnh.xcassets/BieuTuongUngDung.appiconset"
+
+          if [ ! -f "$ANH_GOC" ]; then
+            echo "Khong co BieuTuongGoc.png, bo qua buoc tao icon."
+            exit 0
+          fi
+
+          CHIEU_RONG=$(sips -g pixelWidth "$ANH_GOC" | tail -n 1 | awk '{print $2}')
+          CHIEU_CAO=$(sips -g pixelHeight "$ANH_GOC" | tail -n 1 | awk '{print $2}')
+
+          echo "Kich thuoc anh goc: ${CHIEU_RONG}x${CHIEU_CAO}"
+
+          if [ -z "$CHIEU_RONG" ] || [ -z "$CHIEU_CAO" ]; then
+            echo "Khong doc duoc kich thuoc anh."
+            exit 1
+          fi
+
+          if [ "$CHIEU_RONG" != "$CHIEU_CAO" ]; then
+            echo "Anh bieu tuong phai la anh vuong."
+            exit 1
+          fi
+
+          mkdir -p "$THU_MUC_ICON"
+          mkdir -p build/bieu-tuong
+
+          sips -s format png -z 1024 1024 "$ANH_GOC" --out build/bieu-tuong/BieuTuongChuan.png
+          ANH_CHUAN="build/bieu-tuong/BieuTuongChuan.png"
+
+          sips -z 20 20 "$ANH_CHUAN" --out "$THU_MUC_ICON/BieuTuong-20.png"
+          sips -z 40 40 "$ANH_CHUAN" --out "$THU_MUC_ICON/BieuTuong-20@2x.png"
+          sips -z 29 29 "$ANH_CHUAN" --out "$THU_MUC_ICON/BieuTuong-29.png"
+          sips -z 58 58 "$ANH_CHUAN" --out "$THU_MUC_ICON/BieuTuong-29@2x.png"
+          sips -z 40 40 "$ANH_CHUAN" --out "$THU_MUC_ICON/BieuTuong-40.png"
+          sips -z 80 80 "$ANH_CHUAN" --out "$THU_MUC_ICON/BieuTuong-40@2x.png"
+          sips -z 76 76 "$ANH_CHUAN" --out "$THU_MUC_ICON/BieuTuong-76.png"
+          sips -z 152 152 "$ANH_CHUAN" --out "$THU_MUC_ICON/BieuTuong-76@2x.png"
+          sips -z 167 167 "$ANH_CHUAN" --out "$THU_MUC_ICON/BieuTuong-83.5@2x.png"
+          cp "$ANH_CHUAN" "$THU_MUC_ICON/BieuTuong-1024.png"
+
+          cat > "$THU_MUC_ICON/Contents.json" <<'EOF'
+          {
+            "images": [
+              {"filename":"BieuTuong-20.png","idiom":"ipad","scale":"1x","size":"20x20"},
+              {"filename":"BieuTuong-20@2x.png","idiom":"ipad","scale":"2x","size":"20x20"},
+              {"filename":"BieuTuong-29.png","idiom":"ipad","scale":"1x","size":"29x29"},
+              {"filename":"BieuTuong-29@2x.png","idiom":"ipad","scale":"2x","size":"29x29"},
+              {"filename":"BieuTuong-40.png","idiom":"ipad","scale":"1x","size":"40x40"},
+              {"filename":"BieuTuong-40@2x.png","idiom":"ipad","scale":"2x","size":"40x40"},
+              {"filename":"BieuTuong-76.png","idiom":"ipad","scale":"1x","size":"76x76"},
+              {"filename":"BieuTuong-76@2x.png","idiom":"ipad","scale":"2x","size":"76x76"},
+              {"filename":"BieuTuong-83.5@2x.png","idiom":"ipad","scale":"2x","size":"83.5x83.5"},
+              {"filename":"BieuTuong-1024.png","idiom":"ios-marketing","scale":"1x","size":"1024x1024"}
+            ],
+            "info":{"author":"xcode","version":1}
+          }
+          EOF
+
       - name: Tao du an Xcode
         run: xcodegen generate
 
@@ -47,16 +107,18 @@ jobs:
 
       - name: Dong goi IPA
         run: |
+          rm -rf build/Payload
           mkdir -p build/Payload
           cp -R build/VeTranhGiay.xcarchive/Products/Applications/VeTranhGiay.app build/Payload/
           cd build
           zip -r -9 VeTranhGiay.ipa Payload
 
-      - name: Luu artifact
+      - name: Luu IPA vao Artifacts
         uses: actions/upload-artifact@v4
         with:
           name: VeTranhGiay-IPA
           path: build/VeTranhGiay.ipa
+          if-no-files-found: error
           retention-days: 30
 
       - name: Tao ten ban phat hanh

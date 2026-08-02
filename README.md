@@ -1,9 +1,10 @@
-# VeTranhGiay - Ban nang cap lon
+# VeTranhGiay - Ban sua loi day du
 
-- 7 loai but tren iPadOS 17; 3 loai co ban tren iPadOS 16.
-- 7 o mau tuy chon co dau +, tu luu bang UserDefaults.
-- Net tren cung la lop rieng, khong bi net thuong che len.
-- Do day toi da 100.
-- Luu dong thoi vao Photos va Thu vien tranh trong ung dung.
-- Thu vien cho phep mo ve tiep; nhan giu de xoa.
-- Khu ve duoc mo rong, thanh cong cu va bang mau thu gon.
+Ghi de cac file cu bang toan bo noi dung trong thu muc nay.
+
+Da sua:
+- File LuuMauTuyChon.swift bi thieu phan cuoi va dau ngoac.
+- Khong dung tu khoa Swift lam ten bien.
+- Loai BieuTuongGoc.png khoi tai nguyen dong goi cua ung dung.
+- Workflow nhan moi anh PNG vuong va tu tao icon 1024.
+- Giu nguyen but moi, 7 mau tuy chon, lop net tren cung va thu vien tranh.

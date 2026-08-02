@@ -35,6 +35,7 @@ targets:
       - path: TaiNguyen
         excludes:
           - ThongTin.plist
+          - BieuTuongGoc.png
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.thanhduong.vetranhgiay

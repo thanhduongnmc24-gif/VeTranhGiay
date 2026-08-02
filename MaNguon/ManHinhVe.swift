@@ -378,7 +378,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
         congViecTuDongLuu?.cancel()
         let congViec = DispatchWorkItem { [weak self] in
             guard let self, let ma = self.maBanVeHienTai else { return }
-            try? QuanLyThuVien.dungChung.luuBanVe(
+            _ = try? QuanLyThuVien.dungChung.luuBanVe(
                 maBanVe: ma,
                 banVeThuong: self.khungVeThuong.drawing,
                 banVeTrenCung: self.khungVeTrenCung.drawing,
