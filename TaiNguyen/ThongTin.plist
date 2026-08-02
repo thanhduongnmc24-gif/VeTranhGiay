@@ -29,6 +29,10 @@
         <key>UIColorName</key>
         <string>MauNenGiay</string>
     </dict>
+    <key>UIFileSharingEnabled</key>
+    <true/>
+    <key>LSSupportsOpeningDocumentsInPlace</key>
+    <true/>
     <key>UIRequiresFullScreen</key>
     <true/>
     <key>UISupportedInterfaceOrientations~ipad</key>

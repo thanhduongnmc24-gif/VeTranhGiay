@@ -9,7 +9,6 @@ on:
       - "TaiNguyen/**"
       - "project.yml"
       - ".github/workflows/tao-ipa.yml"
-
   workflow_dispatch:
 
 permissions:
@@ -26,334 +25,50 @@ jobs:
       - name: Cai XcodeGen
         run: brew install xcodegen
 
-      - name: Kiem tra anh bieu tuong goc
-        run: |
-          ANH_GOC="TaiNguyen/BieuTuongGoc.png"
-
-          if [ ! -f "$ANH_GOC" ]; then
-            echo "Khong tim thay anh bieu tuong:"
-            echo "$ANH_GOC"
-            exit 1
-          fi
-
-          CHIEU_RONG=$(sips -g pixelWidth "$ANH_GOC" | tail -n 1 | awk '{print $2}')
-          CHIEU_CAO=$(sips -g pixelHeight "$ANH_GOC" | tail -n 1 | awk '{print $2}')
-
-          echo "Kich thuoc anh goc: ${CHIEU_RONG}x${CHIEU_CAO}"
-
-          if [ -z "$CHIEU_RONG" ] || [ -z "$CHIEU_CAO" ]; then
-            echo "Khong doc duoc kich thuoc anh."
-            exit 1
-          fi
-
-          if [ "$CHIEU_RONG" != "$CHIEU_CAO" ]; then
-            echo "Anh bieu tuong phai la anh vuong."
-            echo "Anh hien tai co kich thuoc: ${CHIEU_RONG}x${CHIEU_CAO}"
-            exit 1
-          fi
-
-          echo "Anh vuong hop le."
-
-      - name: Tao anh bieu tuong chuan 1024
-        run: |
-          ANH_GOC="TaiNguyen/BieuTuongGoc.png"
-          THU_MUC_TAM="build/bieu-tuong"
-          ANH_CHUAN="$THU_MUC_TAM/BieuTuongChuan-1024.png"
-
-          mkdir -p "$THU_MUC_TAM"
-
-          sips \
-            -s format png \
-            -z 1024 1024 \
-            "$ANH_GOC" \
-            --out "$ANH_CHUAN"
-
-          if [ ! -f "$ANH_CHUAN" ]; then
-            echo "Khong tao duoc anh chuan 1024x1024."
-            exit 1
-          fi
-
-          CHIEU_RONG=$(sips -g pixelWidth "$ANH_CHUAN" | tail -n 1 | awk '{print $2}')
-          CHIEU_CAO=$(sips -g pixelHeight "$ANH_CHUAN" | tail -n 1 | awk '{print $2}')
-
-          echo "Anh chuan da tao: ${CHIEU_RONG}x${CHIEU_CAO}"
-
-          if [ "$CHIEU_RONG" != "1024" ] || [ "$CHIEU_CAO" != "1024" ]; then
-            echo "Anh chuan khong dung kich thuoc 1024x1024."
-            exit 1
-          fi
-
-      - name: Tao cac kich thuoc bieu tuong
-        run: |
-          ANH_CHUAN="build/bieu-tuong/BieuTuongChuan-1024.png"
-          THU_MUC_ICON="TaiNguyen/HinhAnh.xcassets/BieuTuongUngDung.appiconset"
-
-          mkdir -p "$THU_MUC_ICON"
-
-          sips -z 20 20 \
-            "$ANH_CHUAN" \
-            --out "$THU_MUC_ICON/BieuTuong-20.png"
-
-          sips -z 40 40 \
-            "$ANH_CHUAN" \
-            --out "$THU_MUC_ICON/BieuTuong-20@2x.png"
-
-          sips -z 29 29 \
-            "$ANH_CHUAN" \
-            --out "$THU_MUC_ICON/BieuTuong-29.png"
-
-          sips -z 58 58 \
-            "$ANH_CHUAN" \
-            --out "$THU_MUC_ICON/BieuTuong-29@2x.png"
-
-          sips -z 40 40 \
-            "$ANH_CHUAN" \
-            --out "$THU_MUC_ICON/BieuTuong-40.png"
-
-          sips -z 80 80 \
-            "$ANH_CHUAN" \
-            --out "$THU_MUC_ICON/BieuTuong-40@2x.png"
-
-          sips -z 76 76 \
-            "$ANH_CHUAN" \
-            --out "$THU_MUC_ICON/BieuTuong-76.png"
-
-          sips -z 152 152 \
-            "$ANH_CHUAN" \
-            --out "$THU_MUC_ICON/BieuTuong-76@2x.png"
-
-          sips -z 167 167 \
-            "$ANH_CHUAN" \
-            --out "$THU_MUC_ICON/BieuTuong-83.5@2x.png"
-
-          cp "$ANH_CHUAN" \
-            "$THU_MUC_ICON/BieuTuong-1024.png"
-
-          echo "Da tao xong tat ca kich thuoc bieu tuong."
-
-      - name: Tao file Contents cho bieu tuong
-        run: |
-          THU_MUC_ICON="TaiNguyen/HinhAnh.xcassets/BieuTuongUngDung.appiconset"
-
-          cat > "$THU_MUC_ICON/Contents.json" <<'EOF'
-          {
-            "images": [
-              {
-                "filename": "BieuTuong-20.png",
-                "idiom": "ipad",
-                "scale": "1x",
-                "size": "20x20"
-              },
-              {
-                "filename": "BieuTuong-20@2x.png",
-                "idiom": "ipad",
-                "scale": "2x",
-                "size": "20x20"
-              },
-              {
-                "filename": "BieuTuong-29.png",
-                "idiom": "ipad",
-                "scale": "1x",
-                "size": "29x29"
-              },
-              {
-                "filename": "BieuTuong-29@2x.png",
-                "idiom": "ipad",
-                "scale": "2x",
-                "size": "29x29"
-              },
-              {
-                "filename": "BieuTuong-40.png",
-                "idiom": "ipad",
-                "scale": "1x",
-                "size": "40x40"
-              },
-              {
-                "filename": "BieuTuong-40@2x.png",
-                "idiom": "ipad",
-                "scale": "2x",
-                "size": "40x40"
-              },
-              {
-                "filename": "BieuTuong-76.png",
-                "idiom": "ipad",
-                "scale": "1x",
-                "size": "76x76"
-              },
-              {
-                "filename": "BieuTuong-76@2x.png",
-                "idiom": "ipad",
-                "scale": "2x",
-                "size": "76x76"
-              },
-              {
-                "filename": "BieuTuong-83.5@2x.png",
-                "idiom": "ipad",
-                "scale": "2x",
-                "size": "83.5x83.5"
-              },
-              {
-                "filename": "BieuTuong-1024.png",
-                "idiom": "ios-marketing",
-                "scale": "1x",
-                "size": "1024x1024"
-              }
-            ],
-            "info": {
-              "author": "xcode",
-              "version": 1
-            }
-          }
-          EOF
-
-          echo "Da tao Contents.json cho bieu tuong."
-
-      - name: Kiem tra cac file bieu tuong
-        run: |
-          THU_MUC_ICON="TaiNguyen/HinhAnh.xcassets/BieuTuongUngDung.appiconset"
-
-          DANH_SACH_FILE="
-          BieuTuong-20.png
-          BieuTuong-20@2x.png
-          BieuTuong-29.png
-          BieuTuong-29@2x.png
-          BieuTuong-40.png
-          BieuTuong-40@2x.png
-          BieuTuong-76.png
-          BieuTuong-76@2x.png
-          BieuTuong-83.5@2x.png
-          BieuTuong-1024.png
-          Contents.json
-          "
-
-          for TEN_FILE in $DANH_SACH_FILE; do
-            if [ ! -f "$THU_MUC_ICON/$TEN_FILE" ]; then
-              echo "Thieu file: $TEN_FILE"
-              exit 1
-            fi
-          done
-
-          echo "Tat ca file bieu tuong deu hop le."
-          ls -lh "$THU_MUC_ICON"
-
       - name: Tao du an Xcode
         run: xcodegen generate
 
       - name: Kiem tra scheme
         run: xcodebuild -list -project VeTranhGiay.xcodeproj
 
-      - name: Ep tat ky chung chi
-        run: |
-          gem install xcodeproj
-
-          ruby -e '
-            require "xcodeproj"
-
-            duong_dan = "VeTranhGiay.xcodeproj"
-            du_an = Xcodeproj::Project.open(duong_dan)
-
-            du_an.targets.each do |muc_tieu|
-              muc_tieu.build_configurations.each do |cau_hinh|
-                cau_hinh.build_settings["CODE_SIGN_STYLE"] = "Manual"
-                cau_hinh.build_settings["DEVELOPMENT_TEAM"] = ""
-                cau_hinh.build_settings["PROVISIONING_PROFILE_SPECIFIER"] = ""
-                cau_hinh.build_settings["CODE_SIGNING_REQUIRED"] = "NO"
-                cau_hinh.build_settings["CODE_SIGNING_ALLOWED"] = "NO"
-                cau_hinh.build_settings["CODE_SIGN_IDENTITY"] = ""
-              end
-            end
-
-            du_an.save
-          '
-
-          echo "Da tat ky chung chi."
-
       - name: Tao archive khong ky
         run: |
-          rm -rf build/archive
-          mkdir -p build/archive
-
+          mkdir -p build
           xcodebuild archive \
             -project VeTranhGiay.xcodeproj \
             -scheme VeTranhGiay \
             -configuration Release \
             -destination "generic/platform=iOS" \
-            -archivePath build/archive/VeTranhGiay.xcarchive \
+            -archivePath build/VeTranhGiay.xcarchive \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY="" \
             DEVELOPMENT_TEAM=""
 
-      - name: Kiem tra ung dung da build
-        run: |
-          UNG_DUNG="build/archive/VeTranhGiay.xcarchive/Products/Applications/VeTranhGiay.app"
-
-          if [ ! -d "$UNG_DUNG" ]; then
-            echo "Khong tim thay VeTranhGiay.app."
-            exit 1
-          fi
-
-          echo "Da tim thay ung dung:"
-          echo "$UNG_DUNG"
-
-          ls -la "$UNG_DUNG"
-
       - name: Dong goi IPA
         run: |
-          rm -rf build/Payload
-          rm -f build/VeTranhGiay.ipa
-
           mkdir -p build/Payload
-
-          cp -R \
-            build/archive/VeTranhGiay.xcarchive/Products/Applications/VeTranhGiay.app \
-            build/Payload/
-
+          cp -R build/VeTranhGiay.xcarchive/Products/Applications/VeTranhGiay.app build/Payload/
           cd build
           zip -r -9 VeTranhGiay.ipa Payload
 
-          echo "Da tao VeTranhGiay.ipa."
-
-      - name: Kiem tra IPA
-        run: |
-          if [ ! -f build/VeTranhGiay.ipa ]; then
-            echo "Khong tim thay file IPA."
-            exit 1
-          fi
-
-          echo "Thong tin file IPA:"
-          ls -lh build/VeTranhGiay.ipa
-
-          unzip -l build/VeTranhGiay.ipa | head -n 30
-
-      - name: Luu IPA vao Artifacts
+      - name: Luu artifact
         uses: actions/upload-artifact@v4
         with:
           name: VeTranhGiay-IPA
           path: build/VeTranhGiay.ipa
-          if-no-files-found: error
           retention-days: 30
 
       - name: Tao ten ban phat hanh
         id: ten_ban
-        run: |
-          echo "the=ban-$(date +'%Y.%m.%d-%H%M')" >> "$GITHUB_OUTPUT"
+        run: echo "the=ban-$(date +'%Y.%m.%d-%H%M')" >> "$GITHUB_OUTPUT"
 
       - name: Dua IPA len Releases
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.ten_ban.outputs.the }}
           name: Ban ve tranh ${{ steps.ten_ban.outputs.the }}
-          body: |
-            IPA chua ky.
-
-            Cach cai dat:
-            1. Tai VeTranhGiay.ipa.
-            2. Import vao ESign.
-            3. Chon chung chi va provisioning profile.
-            4. Ky va cai len iPad.
-
-            Ban build nay da bao gom bieu tuong ung dung.
+          body: "IPA chua ky. Hay ky bang ESign truoc khi cai len iPad."
           files: build/VeTranhGiay.ipa
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

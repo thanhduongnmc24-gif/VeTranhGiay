@@ -1,32 +1,40 @@
 import UIKit
 
 final class NutMau: UIButton {
-    let mau: UIColor
+    var mau: UIColor?
+    var viTriTuyChon: Int?
 
-    init(mau: UIColor) {
+    init(mau: UIColor?, viTriTuyChon: Int? = nil) {
         self.mau = mau
+        self.viTriTuyChon = viTriTuyChon
         super.init(frame: .zero)
-        backgroundColor = mau
-        layer.cornerRadius = 16
-        layer.borderWidth = 2
+        layer.cornerRadius = 13
+        layer.borderWidth = 1.5
         layer.borderColor = UIColor.white.cgColor
         layer.shadowColor = UIColor.black.cgColor
-        layer.shadowOpacity = 0.14
-        layer.shadowRadius = 2
+        layer.shadowOpacity = 0.12
+        layer.shadowRadius = 1.5
         layer.shadowOffset = CGSize(width: 0, height: 1)
         translatesAutoresizingMaskIntoConstraints = false
-        widthAnchor.constraint(equalToConstant: 32).isActive = true
-        heightAnchor.constraint(equalToConstant: 32).isActive = true
-        accessibilityLabel = "Chon mau"
+        widthAnchor.constraint(equalToConstant: 26).isActive = true
+        heightAnchor.constraint(equalToConstant: 26).isActive = true
+        capNhatMau(mau)
     }
 
-    required init?(coder: NSCoder) {
-        fatalError("Khong ho tro khoi tao bang coder")
+    required init?(coder: NSCoder) { fatalError("Khong ho tro coder") }
+
+    func capNhatMau(_ mauMoi: UIColor?) {
+        mau = mauMoi
+        backgroundColor = mauMoi ?? UIColor.tertiarySystemFill
+        setTitle(mauMoi == nil ? "+" : "", for: .normal)
+        setTitleColor(MauSac.mauNau, for: .normal)
+        titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
+        accessibilityLabel = mauMoi == nil ? "Them mau tuy chon" : "Chon mau"
     }
 
     func datDangChon(_ dangChon: Bool) {
-        layer.borderColor = dangChon ? MauSac.mauNau.cgColor : UIColor.white.cgColor
-        layer.borderWidth = dangChon ? 4 : 2
-        transform = dangChon ? CGAffineTransform(scaleX: 1.12, y: 1.12) : .identity
+        layer.borderColor = dangChon ? UIColor.systemBlue.cgColor : UIColor.white.cgColor
+        layer.borderWidth = dangChon ? 3.5 : 1.5
+        transform = dangChon ? CGAffineTransform(scaleX: 1.14, y: 1.14) : .identity
     }
 }
