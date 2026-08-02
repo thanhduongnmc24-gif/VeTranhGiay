@@ -17,3 +17,11 @@ Ung dung ve tranh native cho iPad, dung UIKit va PencilKit.
 - IPA do GitHub tao la IPA chua ky.
 - Lan dau luu tranh, iPad se hoi quyen them anh vao album.
 - Ban ve goc duoc tu dong luu trong ung dung de mo lai va ve tiep.
+
+
+## Nang cap moi
+
+- Bang chon mau tuy y cua iPadOS, co ho tro do trong suot.
+- Che do chi ve bang Apple Pencil, tranh long ban tay cham nham.
+- Nut luu va chon mau dung bieu tuong gon gon.
+- Van giu nguyen tu dong luu, hoan tac, lam lai va xuat PNG 3x.

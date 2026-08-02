@@ -1,13 +1,15 @@
 import UIKit
 import PencilKit
 
-final class ManHinhVe: UIViewController, PKCanvasViewDelegate {
+final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerViewControllerDelegate {
     private let khungVe = PKCanvasView()
     private let thanhCongCu = UIStackView()
     private let thanhMau = UIScrollView()
     private let hangMau = UIStackView()
     private let thanhDoDay = UISlider()
     private let nhanDoDay = UILabel()
+    private let nhanCheDoBut = UILabel()
+    private let chuyenCheDoBut = UISwitch()
     private let dichVuLuuAnh = DichVuLuuAnh()
 
     private var mauDangChon = UIColor.black
@@ -31,12 +33,21 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate {
 
     private func taoGiaoDien() {
         let nutLuu = UIBarButtonItem(
-            title: "Luu anh",
+            image: UIImage(systemName: "square.and.arrow.down"),
             style: .done,
             target: self,
             action: #selector(luuAnhVaoAlbum)
         )
-        navigationItem.rightBarButtonItem = nutLuu
+        nutLuu.accessibilityLabel = "Luu anh"
+
+        let nutChonMau = UIBarButtonItem(
+            image: UIImage(systemName: "paintpalette.fill"),
+            style: .plain,
+            target: self,
+            action: #selector(moBangChonMau)
+        )
+        nutChonMau.accessibilityLabel = "Chon mau tuy y"
+        navigationItem.rightBarButtonItems = [nutLuu, nutChonMau]
 
         khungVe.translatesAutoresizingMaskIntoConstraints = false
         khungVe.layer.cornerRadius = 18
@@ -101,7 +112,20 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate {
         }
         cacNutMau.first?.datDangChon(true)
 
-        let bangDieuKhien = UIStackView(arrangedSubviews: [thanhCongCu, hangDoDay, thanhMau])
+        nhanCheDoBut.text = "Chi Apple Pencil"
+        nhanCheDoBut.font = .systemFont(ofSize: 13, weight: .semibold)
+        nhanCheDoBut.textColor = MauSac.mauNau
+
+        chuyenCheDoBut.isOn = false
+        chuyenCheDoBut.onTintColor = MauSac.mauNau
+        chuyenCheDoBut.addTarget(self, action: #selector(thayDoiCheDoVe), for: .valueChanged)
+
+        let khoangTrong = UIView()
+        let hangCheDoBut = UIStackView(arrangedSubviews: [nhanCheDoBut, khoangTrong, chuyenCheDoBut])
+        hangCheDoBut.axis = .horizontal
+        hangCheDoBut.alignment = .center
+
+        let bangDieuKhien = UIStackView(arrangedSubviews: [thanhCongCu, hangDoDay, hangCheDoBut, thanhMau])
         bangDieuKhien.axis = .vertical
         bangDieuKhien.spacing = 10
         bangDieuKhien.translatesAutoresizingMaskIntoConstraints = false
@@ -198,6 +222,25 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate {
         capNhatCongCuVe()
     }
 
+    @objc private func moBangChonMau() {
+        let bangChonMau = UIColorPickerViewController()
+        bangChonMau.delegate = self
+        bangChonMau.selectedColor = mauDangChon
+        bangChonMau.supportsAlpha = true
+        present(bangChonMau, animated: true)
+    }
+
+    func colorPickerViewControllerDidSelectColor(_ viewController: UIColorPickerViewController) {
+        mauDangChon = viewController.selectedColor
+        cacNutMau.forEach { $0.datDangChon(false) }
+        capNhatCongCuVe()
+    }
+
+    @objc private func thayDoiCheDoVe() {
+        khungVe.drawingPolicy = chuyenCheDoBut.isOn ? .pencilOnly : .anyInput
+        nhanCheDoBut.text = chuyenCheDoBut.isOn ? "Dang chi dung Apple Pencil" : "Pencil va ngon tay"
+    }
+
     @objc private func hoanTac() {
         khungVe.undoManager?.undo()
     }
@@ -237,9 +280,9 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate {
             anhNetVe.draw(at: .zero)
         }
 
-        navigationItem.rightBarButtonItem?.isEnabled = false
+        navigationItem.rightBarButtonItems?.first?.isEnabled = false
         dichVuLuuAnh.luu(anhHoanChinh) { [weak self] ketQua in
-            self?.navigationItem.rightBarButtonItem?.isEnabled = true
+            self?.navigationItem.rightBarButtonItems?.first?.isEnabled = true
             switch ketQua {
             case .success:
                 self?.hienThongBao(tieuDe: "Da luu", noiDung: "Tranh da duoc luu vao album anh.")
