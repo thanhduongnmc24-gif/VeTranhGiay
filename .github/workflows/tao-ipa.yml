@@ -1,0 +1,74 @@
+name: Tao IPA khong ky
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "MaNguon/**"
+      - "TaiNguyen/**"
+      - "project.yml"
+      - ".github/workflows/tao-ipa.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  tao-ipa:
+    runs-on: macos-15
+
+    steps:
+      - name: Lay ma nguon
+        uses: actions/checkout@v4
+
+      - name: Cai XcodeGen
+        run: brew install xcodegen
+
+      - name: Tao du an Xcode
+        run: xcodegen generate
+
+      - name: Kiem tra scheme
+        run: xcodebuild -list -project VeTranhGiay.xcodeproj
+
+      - name: Tao archive khong ky
+        run: |
+          mkdir -p build
+          xcodebuild archive \
+            -project VeTranhGiay.xcodeproj \
+            -scheme VeTranhGiay \
+            -configuration Release \
+            -destination "generic/platform=iOS" \
+            -archivePath build/VeTranhGiay.xcarchive \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM=""
+
+      - name: Dong goi IPA
+        run: |
+          mkdir -p build/Payload
+          cp -R build/VeTranhGiay.xcarchive/Products/Applications/VeTranhGiay.app build/Payload/
+          cd build
+          zip -r -9 VeTranhGiay.ipa Payload
+
+      - name: Luu artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: VeTranhGiay-IPA
+          path: build/VeTranhGiay.ipa
+          retention-days: 30
+
+      - name: Tao ten ban phat hanh
+        id: ten_ban
+        run: echo "the=ban-$(date +'%Y.%m.%d-%H%M')" >> "$GITHUB_OUTPUT"
+
+      - name: Dua IPA len Releases
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.ten_ban.outputs.the }}
+          name: Ban ve tranh ${{ steps.ten_ban.outputs.the }}
+          body: "IPA chua ky. Hay ky bang ESign truoc khi cai len iPad."
+          files: build/VeTranhGiay.ipa
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

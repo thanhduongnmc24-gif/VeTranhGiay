@@ -1,0 +1,50 @@
+name: VeTranhGiay
+options:
+  bundleIdPrefix: com.thanhduong
+  deploymentTarget:
+    iOS: "16.0"
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "5.0"
+    IPHONEOS_DEPLOYMENT_TARGET: "16.0"
+    TARGETED_DEVICE_FAMILY: "2"
+    SUPPORTS_MACCATALYST: NO
+    GENERATE_INFOPLIST_FILE: NO
+    CODE_SIGN_STYLE: Manual
+    DEVELOPMENT_TEAM: ""
+
+schemes:
+  VeTranhGiay:
+    build:
+      targets:
+        VeTranhGiay: all
+    run:
+      config: Debug
+    archive:
+      config: Release
+
+targets:
+  VeTranhGiay:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - path: MaNguon
+      - path: TaiNguyen
+        excludes:
+          - ThongTin.plist
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.thanhduong.vetranhgiay
+        PRODUCT_NAME: VeTranhGiay
+        INFOPLIST_FILE: TaiNguyen/ThongTin.plist
+        ASSETCATALOG_COMPILER_APPICON_NAME: BieuTuongUngDung
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: MauNhan
+        CURRENT_PROJECT_VERSION: 1
+        MARKETING_VERSION: 1.0.0
+        ENABLE_BITCODE: NO
+        CODE_SIGNING_ALLOWED: NO
+        CODE_SIGNING_REQUIRED: NO
+        CODE_SIGN_IDENTITY: ""
