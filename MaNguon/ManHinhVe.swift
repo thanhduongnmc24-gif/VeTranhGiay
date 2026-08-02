@@ -24,6 +24,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
     private var viTriMauDangSua: Int?
     private var maBanVeHienTai: String?
     private var dangVeTrenCung = false
+    private var loaiButNetTrenCung: PKInkingTool.InkType?
     private var congViecTuDongLuu: DispatchWorkItem?
 
     override func viewDidLoad() {
@@ -86,9 +87,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
             let nut = taoNutCongCu(ten: ten, bieuTuong: bieuTuong)
             nut.addAction(UIAction { [weak self, weak nut] _ in
                 guard let self, let nut, let loai else { return }
-                self.loaiButDangChon = loai
-                self.capNhatCongCuVe()
-                self.datNutCongCuDangChon(nut)
+                self.chonLoaiBut(loai, nut: nut)
             }, for: .touchUpInside)
             hangCongCu.addArrangedSubview(nut)
         }
@@ -103,9 +102,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
                 let nut = taoNutCongCu(ten: ten, bieuTuong: bieuTuong)
                 nut.addAction(UIAction { [weak self, weak nut] _ in
                     guard let self, let nut else { return }
-                    self.loaiButDangChon = loai
-                    self.capNhatCongCuVe()
-                    self.datNutCongCuDangChon(nut)
+                    self.chonLoaiBut(loai, nut: nut)
                 }, for: .touchUpInside)
                 hangCongCu.addArrangedSubview(nut)
             }
@@ -285,8 +282,30 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
         capNhatCongCuVe()
     }
 
+    private func chonLoaiBut(_ loaiBut: PKInkingTool.InkType, nut: UIButton) {
+        loaiButDangChon = loaiBut
+
+        if loaiButNetTrenCung == loaiBut {
+            dangVeTrenCung = true
+        } else {
+            dangVeTrenCung = false
+        }
+
+        capNhatKhungVeDangDung()
+        capNhatNutNetTrenCung()
+        capNhatCongCuVe()
+        datNutCongCuDangChon(nut)
+    }
+
     @objc private func batTatNetTrenCung() {
-        dangVeTrenCung.toggle()
+        if dangVeTrenCung {
+            dangVeTrenCung = false
+            loaiButNetTrenCung = nil
+        } else {
+            dangVeTrenCung = true
+            loaiButNetTrenCung = loaiButDangChon
+        }
+
         capNhatKhungVeDangDung()
         capNhatNutNetTrenCung()
         capNhatCongCuVe()
