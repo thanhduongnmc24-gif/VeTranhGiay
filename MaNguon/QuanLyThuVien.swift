@@ -33,7 +33,7 @@ final class QuanLyThuVien {
         try banVeThuong.dataRepresentation().write(to: thuMuc.appendingPathComponent("net-thuong.data"), options: .atomic)
         try banVeTrenCung.dataRepresentation().write(to: thuMuc.appendingPathComponent("net-tren-cung.data"), options: .atomic)
         guard let duLieuAnh = anhXemTruoc.pngData() else {
-            throw NSError(domain: "VeTranhGiay", code: 10, userInfo: [NSLocalizedDescriptionKey: "Khong tao duoc anh PNG."])
+            throw NSError(domain: "VeTranhGiay", code: 10, userInfo: [NSLocalizedDescriptionKey: "Không tạo được ảnh PNG."])
         }
         try duLieuAnh.write(to: thuMuc.appendingPathComponent("anh.png"), options: .atomic)
         let thongTin: [String: Any] = ["maBanVe": ma, "ngayTao": Date().timeIntervalSince1970]

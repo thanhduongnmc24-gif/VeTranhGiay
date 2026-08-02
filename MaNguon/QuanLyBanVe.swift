@@ -15,7 +15,7 @@ final class QuanLyBanVe {
         do {
             try banVe.dataRepresentation().write(to: duongDan, options: .atomic)
         } catch {
-            print("Khong luu duoc ban ve: \(error.localizedDescription)")
+            print("Không lưu được bản vẽ: \(error.localizedDescription)")
         }
     }
 

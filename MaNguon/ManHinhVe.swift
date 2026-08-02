@@ -25,11 +25,11 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
     private var maBanVeHienTai: String?
     private var dangVeTrenCung = false
     private var loaiButNetTrenCung: PKInkingTool.InkType?
-    private var congViecTuDongLuu: DispatchWorkItem?
+    private var congViecTuĐóngLuu: DispatchWorkItem?
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Ve Tranh Giay"
+        title = "Vẽ Tranh Giấy"
         view.backgroundColor = MauSac.mauNen
         taoGiaoDien()
         cauHinhHaiKhungVe()
@@ -79,9 +79,9 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
         cuonCongCu.addSubview(hangCongCu)
 
         let thongTinBut: [(String, String, PKInkingTool.InkType?)] = [
-            ("But chi", "pencil.tip", .pencil),
-            ("But muc", "pencil.line", .pen),
-            ("Danh dau", "highlighter", .marker)
+            ("Bút chì", "pencil.tip", .pencil),
+            ("Bút mực", "pencil.line", .pen),
+            ("Đánh dấu", "highlighter", .marker)
         ]
         for (ten, bieuTuong, loai) in thongTinBut {
             let nut = taoNutCongCu(ten: ten, bieuTuong: bieuTuong)
@@ -93,10 +93,10 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
         }
         if #available(iOS 17.0, *) {
             let butMoi: [(String, String, PKInkingTool.InkType)] = [
-                ("Net deu", "line.diagonal", .monoline),
-                ("But may", "scribble.variable", .fountainPen),
-                ("Mau nuoc", "drop.fill", .watercolor),
-                ("Sap mau", "paintbrush.pointed.fill", .crayon)
+                ("Nét đều", "line.diagonal", .monoline),
+                ("Bút máy", "scribble.variable", .fountainPen),
+                ("Màu nước", "drop.fill", .watercolor),
+                ("Sáp màu", "paintbrush.pointed.fill", .crayon)
             ]
             for (ten, bieuTuong, loai) in butMoi {
                 let nut = taoNutCongCu(ten: ten, bieuTuong: bieuTuong)
@@ -107,24 +107,24 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
                 hangCongCu.addArrangedSubview(nut)
             }
         }
-        let nutTay = taoNutCongCu(ten: "Tay", bieuTuong: "eraser.fill")
-        nutTay.addAction(UIAction { [weak self, weak nutTay] _ in
-            guard let self, let nutTay else { return }
+        let nutTẩy = taoNutCongCu(ten: "Tẩy", bieuTuong: "eraser.fill")
+        nutTẩy.addAction(UIAction { [weak self, weak nutTẩy] _ in
+            guard let self, let nutTẩy else { return }
             self.khungVeDangDung.tool = PKEraserTool(.vector)
-            self.datNutCongCuDangChon(nutTay)
+            self.datNutCongCuDangChon(nutTẩy)
         }, for: .touchUpInside)
-        hangCongCu.addArrangedSubview(nutTay)
+        hangCongCu.addArrangedSubview(nutTẩy)
 
-        let nutHoanTac = taoNutCongCu(ten: "Hoan tac", bieuTuong: "arrow.uturn.backward")
+        let nutHoanTac = taoNutCongCu(ten: "Hoàn tác", bieuTuong: "arrow.uturn.backward")
         nutHoanTac.addAction(UIAction { [weak self] _ in self?.khungVeDangDung.undoManager?.undo() }, for: .touchUpInside)
         hangCongCu.addArrangedSubview(nutHoanTac)
-        let nutLamLai = taoNutCongCu(ten: "Lam lai", bieuTuong: "arrow.uturn.forward")
+        let nutLamLai = taoNutCongCu(ten: "Làm lại", bieuTuong: "arrow.uturn.forward")
         nutLamLai.addAction(UIAction { [weak self] _ in self?.khungVeDangDung.undoManager?.redo() }, for: .touchUpInside)
         hangCongCu.addArrangedSubview(nutLamLai)
         datNutCongCuDangChon(cacNutCongCu.first)
 
         nutNetTrenCung.setImage(UIImage(systemName: "checkmark.square"), for: .normal)
-        nutNetTrenCung.setTitle(" Net tren cung", for: .normal)
+        nutNetTrenCung.setTitle(" Nét trên cùng", for: .normal)
         nutNetTrenCung.titleLabel?.font = .systemFont(ofSize: 11, weight: .semibold)
         nutNetTrenCung.addTarget(self, action: #selector(batTatNetTrenCung), for: .touchUpInside)
         capNhatNutNetTrenCung()
@@ -340,7 +340,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
 
     @objc private func luuAnh() {
         guard !khungVeThuong.drawing.strokes.isEmpty || !khungVeTrenCung.drawing.strokes.isEmpty else {
-            hienThongBao("Chua co net ve", "Hay ve mot chut truoc khi luu.")
+            hienThongBao("Chưa có nét vẽ", "Hãy vẽ một chút trước khi lưu.")
             return
         }
         let anh = taoAnhTongHop()
@@ -352,13 +352,13 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
                 anhXemTruoc: anh
             )
         } catch {
-            hienThongBao("Khong luu duoc trong ung dung", error.localizedDescription)
+            hienThongBao("Không lưu được trong ứng dụng", error.localizedDescription)
             return
         }
         dichVuLuuAnh.luu(anh) { [weak self] ketQua in
             switch ketQua {
-            case .success: self?.hienThongBao("Da luu", "Da luu vao Album Anh va Thu vien tranh cua ung dung.")
-            case .failure(let loi): self?.hienThongBao("Da luu trong ung dung", "Khong them duoc vao Album Anh: \(loi.localizedDescription)")
+            case .success: self?.hienThongBao("Đã lưu", "Đã lưu vao Album Anh va Thư viện tranh cua ung dung.")
+            case .failure(let loi): self?.hienThongBao("Đã lưu trong ung dung", "Không thêm được vào Album Ảnh: \(loi.localizedDescription)")
             }
         }
     }
@@ -372,29 +372,29 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
         maBanVeHienTai = banVe.maBanVe
         khungVeThuong.drawing = banVe.banVeThuong
         khungVeTrenCung.drawing = banVe.banVeTrenCung
-        title = "Dang sua tranh"
+        title = "Đang sửa tranh"
     }
 
     @objc private func taoTranhMoi() {
-        let hopThoai = UIAlertController(title: "Tao tranh moi?", message: "Hay luu tranh hien tai neu can.", preferredStyle: .alert)
-        hopThoai.addAction(UIAlertAction(title: "Huy", style: .cancel))
-        hopThoai.addAction(UIAlertAction(title: "Tao moi", style: .destructive) { [weak self] _ in
+        let hopThoai = UIAlertController(title: "Tạo tranh mới?", message: "Hãy lưu tranh hiện tại nếu cần.", preferredStyle: .alert)
+        hopThoai.addAction(UIAlertAction(title: "Hủy", style: .cancel))
+        hopThoai.addAction(UIAlertAction(title: "Tạo mới", style: .destructive) { [weak self] _ in
             self?.maBanVeHienTai = nil
             self?.khungVeThuong.drawing = PKDrawing()
             self?.khungVeTrenCung.drawing = PKDrawing()
-            self?.title = "Ve Tranh Giay"
+            self?.title = "Vẽ Tranh Giấy"
         })
         present(hopThoai, animated: true)
     }
 
     private func hienThongBao(_ tieuDe: String, _ noiDung: String) {
         let hopThoai = UIAlertController(title: tieuDe, message: noiDung, preferredStyle: .alert)
-        hopThoai.addAction(UIAlertAction(title: "Dong", style: .default))
+        hopThoai.addAction(UIAlertAction(title: "Đóng", style: .default))
         present(hopThoai, animated: true)
     }
 
     func canvasViewDrawingDidChange(_ canvasView: PKCanvasView) {
-        congViecTuDongLuu?.cancel()
+        congViecTuĐóngLuu?.cancel()
         let congViec = DispatchWorkItem { [weak self] in
             guard let self, let ma = self.maBanVeHienTai else { return }
             _ = try? QuanLyThuVien.dungChung.luuBanVe(
@@ -404,7 +404,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
                 anhXemTruoc: self.taoAnhTongHop()
             )
         }
-        congViecTuDongLuu = congViec
+        congViecTuĐóngLuu = congViec
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.2, execute: congViec)
     }
 }

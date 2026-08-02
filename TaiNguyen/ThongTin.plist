@@ -5,7 +5,7 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>vi</string>
     <key>CFBundleDisplayName</key>
-    <string>Ve Tranh Giay</string>
+    <string>Vẽ Tranh Giấy</string>
     <key>CFBundleExecutable</key>
     <string>$(EXECUTABLE_NAME)</string>
     <key>CFBundleIdentifier</key>
@@ -23,7 +23,7 @@
     <key>LSRequiresIPhoneOS</key>
     <true/>
     <key>NSPhotoLibraryAddUsageDescription</key>
-    <string>Ung dung can quyen de luu tranh cua ban vao thu vien anh.</string>
+    <string>Ứng dụng cần quyền để lưu tranh của bạn vào thư viện ảnh.</string>
     <key>UILaunchScreen</key>
     <dict>
         <key>UIColorName</key>

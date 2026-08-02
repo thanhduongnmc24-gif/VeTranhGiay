@@ -34,5 +34,5 @@ final class OAnhThuVien: UICollectionViewCell {
         ])
     }
 
-    required init?(coder: NSCoder) { fatalError("Khong ho tro coder") }
+    required init?(coder: NSCoder) { fatalError("Không hỗ trợ coder") }
 }

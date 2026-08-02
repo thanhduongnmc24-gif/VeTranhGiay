@@ -21,7 +21,7 @@ final class NutMau: UIButton {
         capNhatMau(mau)
     }
 
-    required init?(coder: NSCoder) { fatalError("Khong ho tro coder") }
+    required init?(coder: NSCoder) { fatalError("Không hỗ trợ coder") }
 
     func capNhatMau(_ mauMoi: UIColor?) {
         mau = mauMoi
@@ -29,7 +29,7 @@ final class NutMau: UIButton {
         setTitle(mauMoi == nil ? "+" : "", for: .normal)
         setTitleColor(MauSac.mauNau, for: .normal)
         titleLabel?.font = .systemFont(ofSize: 18, weight: .bold)
-        accessibilityLabel = mauMoi == nil ? "Them mau tuy chon" : "Chon mau"
+        accessibilityLabel = mauMoi == nil ? "Thêm màu tùy chọn" : "Chọn màu"
     }
 
     func datDangChon(_ dangChon: Bool) {

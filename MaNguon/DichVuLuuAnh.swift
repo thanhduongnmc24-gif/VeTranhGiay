@@ -8,7 +8,7 @@ final class DichVuLuuAnh {
                 let loi = NSError(
                     domain: "VeTranhGiay",
                     code: 1,
-                    userInfo: [NSLocalizedDescriptionKey: "Chua co quyen luu anh vao album."]
+                    userInfo: [NSLocalizedDescriptionKey: "Chưa có quyền lưu ảnh vào album."]
                 )
                 DispatchQueue.main.async { hoanTat(.failure(loi)) }
                 return
@@ -26,7 +26,7 @@ final class DichVuLuuAnh {
                         let loiKhongRo = NSError(
                             domain: "VeTranhGiay",
                             code: 2,
-                            userInfo: [NSLocalizedDescriptionKey: "Khong the luu anh."]
+                            userInfo: [NSLocalizedDescriptionKey: "Không thể lưu ảnh."]
                         )
                         hoanTat(.failure(loiKhongRo))
                     }

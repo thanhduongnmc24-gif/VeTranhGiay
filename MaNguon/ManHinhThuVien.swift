@@ -20,11 +20,11 @@ final class ManHinhThuVien: UIViewController, UICollectionViewDataSource, UIColl
         self.khiChon = khiChon
         super.init(nibName: nil, bundle: nil)
     }
-    required init?(coder: NSCoder) { fatalError("Khong ho tro coder") }
+    required init?(coder: NSCoder) { fatalError("Không hỗ trợ coder") }
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "Thu vien tranh"
+        title = "Thư viện tranh"
         navigationItem.rightBarButtonItem = UIBarButtonItem(systemItem: .done, primaryAction: UIAction { [weak self] _ in self?.dismiss(animated: true) })
         luoiAnh.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(luoiAnh)
@@ -59,10 +59,10 @@ final class ManHinhThuVien: UIViewController, UICollectionViewDataSource, UIColl
         let banVe = danhSach[indexPath.item]
         return UIContextMenuConfiguration(identifier: nil, previewProvider: nil) { [weak self] _ in
             UIMenu(children: [
-                UIAction(title: "Mo va ve tiep", image: UIImage(systemName: "pencil")) { _ in
+                UIAction(title: "Mở và vẽ tiếp", image: UIImage(systemName: "pencil")) { _ in
                     self?.dismiss(animated: true) { [khiChon = self?.khiChon] in khiChon?(banVe) }
                 },
-                UIAction(title: "Xoa", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
+                UIAction(title: "Xóa", image: UIImage(systemName: "trash"), attributes: .destructive) { _ in
                     try? QuanLyThuVien.dungChung.xoaBanVe(maBanVe: banVe.maBanVe)
                     self?.napDanhSach()
                 }
