@@ -4,7 +4,7 @@ import PencilKit
 final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerViewControllerDelegate {
     private let khungVeThuong = PKCanvasView()
     private let khungVeTrenCung = PKCanvasView()
-    private let lopTay = UIView()
+    private let lopTay = VongTayView()
     private let bangDieuKhien = UIVisualEffectView(effect: UIBlurEffect(style: .systemMaterialLight))
     private let cuonCongCu = UIScrollView()
     private let hangCongCu = UIStackView()
@@ -297,6 +297,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
 
     private func chonLoaiBut(_ loaiBut: PKInkingTool.InkType, nut: UIButton) {
         dangDungTay = false
+        lopTay.anVongTay()
         loaiButDangChon = loaiBut
 
         if loaiButNetTrenCung == loaiBut {
@@ -313,6 +314,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
 
     @objc private func batTatNetTrenCung() {
         dangDungTay = false
+        lopTay.anVongTay()
         if dangVeTrenCung {
             dangVeTrenCung = false
             loaiButNetTrenCung = nil
@@ -340,11 +342,37 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
         view.bringSubviewToFront(bangDieuKhien)
     }
 
-    @objc private func xuLyCuChiTay(_ cuChi: UIPanGestureRecognizer) { tayNetTai(cuChi.location(in: lopTay)) }
-    @objc private func xuLyChamTay(_ cuChi: UITapGestureRecognizer) { tayNetTai(cuChi.location(in: lopTay)) }
+    @objc private func xuLyCuChiTay(_ cuChi: UIPanGestureRecognizer) {
+        let viTri = cuChi.location(in: lopTay)
+        let banKinh = banKinhTayHienTai()
 
-    private func tayNetTai(_ viTri: CGPoint) {
-        let banKinh = max(CGFloat(12), doDayNet * 0.75)
+        switch cuChi.state {
+        case .began, .changed:
+            lopTay.hienVongTay(tai: viTri, banKinh: banKinh)
+            tayNetTai(viTri, banKinh: banKinh)
+        case .ended, .cancelled, .failed:
+            lopTay.anVongTay()
+        default:
+            break
+        }
+    }
+
+    @objc private func xuLyChamTay(_ cuChi: UITapGestureRecognizer) {
+        let viTri = cuChi.location(in: lopTay)
+        let banKinh = banKinhTayHienTai()
+        lopTay.hienVongTay(tai: viTri, banKinh: banKinh)
+        tayNetTai(viTri, banKinh: banKinh)
+
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) { [weak self] in
+            self?.lopTay.anVongTay()
+        }
+    }
+
+    private func banKinhTayHienTai() -> CGFloat {
+        max(CGFloat(14), doDayNet * 0.65)
+    }
+
+    private func tayNetTai(_ viTri: CGPoint, banKinh: CGFloat) {
         let vungTay = CGRect(
             x: viTri.x - banKinh,
             y: viTri.y - banKinh,
@@ -352,11 +380,10 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
             height: banKinh * 2
         )
 
+        // Luon kiem tra tat ca net tren lop tren cung, khong phan biet loai but.
         let cacNetTrenCung = khungVeTrenCung.drawing.strokes
         let netTrenCungConLai = cacNetTrenCung.filter { netVe in
-            !netVe.renderBounds
-                .insetBy(dx: -banKinh, dy: -banKinh)
-                .intersects(vungTay)
+            !netVe.renderBounds.intersects(vungTay)
         }
 
         if netTrenCungConLai.count != cacNetTrenCung.count {
@@ -364,11 +391,11 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
             return
         }
 
+        // Khi khong con net tren cung tai vi tri do, xoa net lop thuong ben duoi.
+        // Tat ca kieu but deu duoc xu ly nhu nhau.
         let cacNetThuong = khungVeThuong.drawing.strokes
         let netThuongConLai = cacNetThuong.filter { netVe in
-            !netVe.renderBounds
-                .insetBy(dx: -banKinh, dy: -banKinh)
-                .intersects(vungTay)
+            !netVe.renderBounds.intersects(vungTay)
         }
 
         if netThuongConLai.count != cacNetThuong.count {
@@ -388,6 +415,7 @@ final class ManHinhVe: UIViewController, PKCanvasViewDelegate, UIColorPickerView
         khungVeThuong.drawing = PKDrawing()
         khungVeTrenCung.drawing = PKDrawing()
         dangDungTay = false
+        lopTay.anVongTay()
         dangVeTrenCung = false
         loaiButNetTrenCung = nil
         title = "Vẽ Tranh Giấy"

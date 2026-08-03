@@ -1,9 +1,8 @@
-# Vẽ Tranh Giấy
+# Vẽ Tranh Giấy - Sửa tẩy mọi loại bút
 
-Bản này giữ nguyên vị trí nút Tẩy và sửa thứ tự tẩy:
-
-- Nếu vùng tẩy chạm nét ở lớp trên cùng, chỉ xóa nét lớp trên cùng.
-- Chỉ khi vị trí đó không còn nét lớp trên cùng mới xóa nét ở lớp thường bên dưới.
-- Giữ nguyên nút Xóa tất cả.
-- Sau khi lưu, bảng vẽ được làm mới.
-- Chữ giao diện có dấu; tên file, hàm và biến trong mã nguồn không dấu.
+- Nút Tẩy xóa mọi loại bút, không phụ thuộc loại bút đang chọn.
+- Tẩy theo thứ tự từ lớp Nét trên cùng xuống lớp thường.
+- Có vòng tròn xanh thể hiện chính xác vùng tẩy.
+- Kích thước vòng tròn thay đổi theo thanh độ dày.
+- Giữ nút Xóa tất cả và tự làm mới bảng vẽ sau khi lưu.
+- Chữ giao diện có dấu; tên file, lớp, hàm và biến trong mã nguồn không dấu.
